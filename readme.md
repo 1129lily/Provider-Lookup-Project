@@ -22,19 +22,19 @@ I asked Claude the following question:
 
 > I want to build a website using Django, with a presentation style similar to [download.cms.gov/nppes/NPI_Files.html](https://download.cms.gov/nppes/NPI_Files.html). In short, I have more or less finished organizing the database, and the website will generally consist of the following parts:
 
-### (1) Search Page
+> ### (1) Search Page
+> <img width="865" height="490" alt="image" src="https://github.com/user-attachments/assets/fbe3de9b-f901-44c9-aa29-dc211c1501d6" />
+> - First name and last name do **not** require exact matching.
+> - The **State** dropdown supports:
+>   - A searchable input at the top.
+>   - A scrollable list of all 50 U.S. states.
+> - Only one input field needs to be filled to trigger a search.
 
-- First name and last name do **not** require exact matching.
-- The **State** dropdown supports:
-  - A searchable input at the top.
-  - A scrollable list of all 50 U.S. states.
-- Only one input field needs to be filled to trigger a search.
-
-### (2) Results
-
-- After clicking the **Search** button, the results appear in a list view.
-- The **Address** field in each result should be a hyperlink to **Google Maps**.
-- A **Full Information** link should lead to a detail page with all stored data about that provider.
+> ### (2) Results
+> <img width="865" height="492" alt="image" src="https://github.com/user-attachments/assets/c9954f8e-4501-4e8b-a569-0fe0957af3d0" />
+> - After clicking the **Search** button, the results appear in a list view.
+> - The **Address** field in each result should be a hyperlink to **Google Maps**.
+> - A **Full Information** link should lead to a detail page with all stored data about that provider.
 
 > Please help me to construct the website step by step.
 
