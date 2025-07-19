@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+
+{% block title %}NPI Provider Search{% endblock %}
+
+{% block content %}
+<h1 class="header-title">Health Care Provider Search</h1>
+
+<div class="search-container">
+    <form method="get" id="searchForm">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <label for="{{ form.first_name.id_for_label }}" class="form-label">First Name</label>
+                {{ form.first_name }}
+            </div>
+
+            <div class="col-md-4">
+                <label for="{{ form.last_name.id_for_label }}" class="form-label">Last Name</label>
+                {{ form.last_name }}
+            </div>
+
+            <div class="col-md-4">
+                <label for="{{ form.city.id_for_label }}" class="form-label">City</label>
+                {{ form.city }}
+            </div>
+        </div>
+
+        <div class="row g-3 mt-2">
+            <div class="col-md-4">
+                <label for="{{ form.state.id_for_label }}" class="form-label">State</label>
+                {{ form.state }}
+            </div>
+
+            <div class="col-md-4">
+                <label for="{{ form.postal_code.id_for_label }}" class="form-label">Postal Code</label>
+                {{ form.postal_code }}
+            </div>
+
+            <div class="col-md-4">
+                <label for="{{ form.taxonomy.id_for_label }}" class="form-label">Taxonomy/Specialty</label>
+                {{ form.taxonomy }}
+            </div>
+        </div>
+
+        {% if form.non_field_errors %}
+        <div class="alert alert-danger mt-3">
+            {{ form.non_field_errors }}
+        </div>
+        {% endif %}
+
+        <div class="row mt-4">
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary btn-lg me-2">
+                    <i class="bi bi-search"></i> Search
+                </button>
+                <button type="button" class="btn btn-secondary btn-lg" onclick="clearForm()">
+                    Clear
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+{% if query_performed %}
+<div class="results-container">
+    {% if results %}
+    <h3 class="mb-3">Search Results ({{ results|length }} found)</h3>
+
+    {% for provider in results %}
+    <div class="result-row">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="provider-name">{{ provider.full_name }}</div>
+                <div class="npi-number">NPI: {{ provider.npi }}</div>
+                {% if provider.primary_taxonomy %}
+                <div class="text-muted">{{ provider.primary_taxonomy }}</div>
+                {% endif %}
+                {% if provider.credential %}
+                <div class="text-muted">{{ provider.credential }}</div>
+                {% endif %}
+            </div>
+            <div class="col-md-4 text-end">
+                {% if provider.full_address %}
+                <div>
+                    <strong>Address:</strong><br>
+                    {% if provider.google_maps_url %}
+                    <a href="{{ provider.google_maps_url }}" target="_blank" class="address-link">
+                        {{ provider.full_address }}
+                    </a>
+                    {% else %}
+                    {{ provider.full_address }}
+                    {% endif %}
+                </div>
+                {% endif %}
+                <div class="mt-2">
+                    <a href="{% url 'providers:detail' provider.npi %}" class="detail-link">
+                        Full Information →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    {% if results.has_other_pages %}
+    <nav aria-label="Search results pagination" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if results.has_previous %}
+            <li class="page-item">
+                <a class="page-link"
+                    href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page=1">First</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link"
+                    href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ results.previous_page_number }}">Previous</a>
+            </li>
+            {% endif %}
+
+            <li class="page-item active">
+                <span class="page-link">
+                    Page {{ results.number }} of {{ results.paginator.num_pages }}
+                </span>
+            </li>
+
+            {% if results.has_next %}
+            <li class="page-item">
+                <a class="page-link"
+                    href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ results.next_page_number }}">Next</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link"
+                    href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ results.paginator.num_pages }}">Last</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+    {% else %}
+    <div class="alert alert-info">
+        <h4>No Results Found</h4>
+        <p>Sorry, no providers match your search criteria. Please try different search terms.</p>
+    </div>
+    {% endif %}
+</div>
+{% endif %}
+
+<script>
+    function clearForm() {
+        document.getElementById('searchForm').reset();
+        $('.searchable-select').val(null).trigger('change');
+    }
+</script>
+
+{% endblock %}

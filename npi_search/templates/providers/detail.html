@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ provider.full_name }} - Provider Details{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="header-title mb-0">Provider Details</h1>
+    <a href="{% url 'providers:search' %}" class="btn btn-secondary">← Back to Search</a>
+</div>
+
+<div class="results-container">
+    <div class="row">
+        <div class="col-md-8">
+            <h2 class="provider-name mb-3">{{ provider.full_name }}</h2>
+
+            <div class="row g-4">
+                <!-- Basic Information -->
+                <div class="col-12">
+                    <h4 class="border-bottom pb-2">Basic Information</h4>
+                    <div class="row">
+                        <div class="col-sm-3"><strong>NPI Number:</strong></div>
+                        <div class="col-sm-9">{{ provider.npi }}</div>
+                    </div>
+                    {% if provider.organization_name %}
+                    <div class="row">
+                        <div class="col-sm-3"><strong>Organization:</strong></div>
+                        <div class="col-sm-9">{{ provider.organization_name }}</div>
+                    </div>
+                    {% endif %}
+                    {% if provider.credential %}
+                    <div class="row">
+                        <div class="col-sm-3"><strong>Credential:</strong></div>
+                        <div class="col-sm-9">{{ provider.credential }}</div>
+                    </div>
+                    {% endif %}
+                    {% if provider.primary_taxonomy %}
+                    <div class="row">
+                        <div class="col-sm-3"><strong>Primary Specialty:</strong></div>
+                        <div class="col-sm-9">{{ provider.primary_taxonomy }}</div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Address Information -->
+                {% if provider.full_address %}
+                <div class="col-12">
+                    <h4 class="border-bottom pb-2">Address</h4>
+                    <div class="row">
+                        <div class="col-sm-3"><strong>Address:</strong></div>
+                        <div class="col-sm-9">
+                            {% if provider.address_line_1 %}{{ provider.address_line_1 }}<br>{% endif %}
+                            {% if provider.address_line_2 %}{{ provider.address_line_2 }}<br>{% endif %}
+                            {% if provider.city %}{{ provider.city }}, {% endif %}
+                            {% if provider.state %}{{ provider.get_state_display }} {% endif %}
+                            {% if provider.postal_code %}{{ provider.postal_code }}{% endif %}
+                        </div>
+                    </div>
+                    {% if provider.google_maps_url %}
+                    <div class="row mt-2">
+                        <div class="col-sm-3"></div>
+                        <div class="col-sm-9">
+                            <a href="{{ provider.google_maps_url }}" target="_blank"
+                                class="btn btn-outline-primary btn-sm">
+                                📍 View on Google Maps
+                            </a>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <!-- Contact Information -->
+                {% if provider.phone or provider.fax %}
+                <div class="col-12">
+                    <h4 class="border-bottom pb-2">Contact Information</h4>
+                    {% if provider.phone %}
+                    <div class="row">
+                        <div class="col-sm-3"><strong>Phone:</strong></div>
+                        <div class="col-sm-9">{{ provider.phone }}</div>
+                    </div>
+                    {% endif %}
+                    {% if provider.fax %}
+                    <div class="row">
+                        <div class="col-sm-3"><strong>Fax:</strong></div>
+                        <div class="col-sm-9">{{ provider.fax }}</div>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <!-- Additional Information -->
+                <div class="col-12">
+                    <h4 class="border-bottom pb-2">Record Information</h4>
+                    <div class="row">
+                        <div class="col-sm-3"><strong>Last Updated:</strong></div>
+                        <div class="col-sm-9">{{ provider.updated_at|date:"F j, Y g:i A" }}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3"><strong>Created:</strong></div>
+                        <div class="col-sm-9">{{ provider.created_at|date:"F j, Y g:i A" }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar with Quick Actions -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    {% if provider.google_maps_url %}
+                    <a href="{{ provider.google_maps_url }}" target="_blank" class="btn btn-primary btn-sm w-100 mb-2">
+                        📍 View Location
+                    </a>
+                    {% endif %}
+
+                    <button class="btn btn-outline-secondary btn-sm w-100 mb-2" onclick="printPage()">
+                        🖨️ Print Details
+                    </button>
+
+                    <a href="{% url 'providers:search' %}" class="btn btn-outline-primary btn-sm w-100">
+                        🔍 New Search
+                    </a>
+                </div>
+            </div>
+
+            {% if provider.npi %}
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">NPI Information</h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">
+                        <small class="text-muted">
+                            NPI Registry is maintained by the Centers for Medicare & Medicaid Services (CMS).
+                        </small>
+                    </p>
+                    <p class="card-text">
+                        <strong>NPI:</strong> {{ provider.npi }}
+                    </p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+    function printPage() {
+        window.print();
+    }
+</script>
+
+{% endblock %}
